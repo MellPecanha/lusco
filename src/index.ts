@@ -1,7 +1,9 @@
 import express, { Request, Response } from 'express';
+import todoRoutes from './routes/todoRoutes';
 
 const app = express();
 app.use(express.json());
+app.use(todoRoutes);
 
 app.get('/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok' });
