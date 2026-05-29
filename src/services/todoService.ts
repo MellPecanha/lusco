@@ -1,6 +1,20 @@
 import { CreateTodoDTO, Priority, Todo, UpdateTodoDTO } from '../models/todo';
 import { TodoRepository } from '../repositories/todoRepository';
 
+export type ListOptions = {
+  tag?: string;
+  completed?: boolean;
+  page?: number;
+  limit?: number;
+};
+
+export type PagedResult<T> = {
+  items: T[];
+  total: number;
+  page: number;
+  limit: number;
+};
+
 export class TodoValidationError extends Error {
   constructor(message: string) {
     super(message);
@@ -31,8 +45,38 @@ export class TodoService {
     });
   }
 
-  async listTodos(): Promise<Todo[]> {
-    return this.repository.findAll();
+  async listTodos(options?: ListOptions): Promise<PagedResult<Todo>> {
+    const page = Math.max(1, options?.page ?? 1);
+    const limit = Math.max(1, options?.limit ?? 10);
+
+    const all = await this.repository.findAll();
+
+    if (page <= 0 || limit <= 0) {
+      throw new TodoValidationError('Page and limit must be positive integers');
+    }
+
+    function matchesFilters(todo: Todo): boolean {
+      if (options?.tag && !todo.tags?.includes(options.tag)) {
+        return false;
+      }
+
+      if (options?.completed !== undefined && todo.completed !== options.completed) {
+        return false;
+      }
+
+      return true;
+    }
+
+    const total = all.filter(matchesFilters).length;
+    const start = (page - 1) * limit;
+    const items = all.filter(matchesFilters).slice(start, start + limit);
+
+    return {
+      items,
+      total,
+      page,
+      limit
+    };
   }
 
   async getTodoById(id: string): Promise<Todo> {
