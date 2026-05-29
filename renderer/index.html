@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LUSCO</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" type="image/png" href="assets/logo-lusco.png" />
+</head>
+
+<body>
+  <!-- use both classes so original CSS and project-wide CSS apply -->
+  <main class="lusco-root bruma-root" id="app">
+    <div class="pixel-bg"></div>
+    <div class="stars" id="stars"></div>
+    <div class="moon"></div>
+
+    <div class="mountain-back"></div>
+    <div class="mountain-front"></div>
+
+    <div id="buildings"></div>
+    <div id="trees"></div>
+    <div class="ground"></div>
+
+    <div class="ui-layer">
+      <div class="top-bar">
+        <span class="app-name">LUSCO</span>
+        <div class="music-ctrl">
+          <span class="music-label" id="music-label">♪ lo-fi</span>
+          <input type="range" class="vol-slider" id="vol" min="0" max="100" value="70" title="volume" />
+          <button class="mute-btn" id="mute-btn" title="mute">♪</button>
+        </div>
+      </div>
+
+      <div class="timer-section">
+        <div class="mode-tabs">
+          <button class="mode-tab active" data-mode="focus">FOCO</button>
+          <button class="mode-tab" data-mode="short">PAUSA</button>
+          <button class="mode-tab" data-mode="long">LONGA</button>
+        </div>
+
+        <div class="timer-display" id="timer-display">25:00</div>
+
+        <div class="timer-controls">
+          <button class="ctrl-btn secondary" id="reset-btn">RESET</button>
+          <button class="ctrl-btn primary" id="start-btn">INICIAR</button>
+          <button class="ctrl-btn secondary" id="skip-btn">SKIP</button>
+        </div>
+
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill" style="width:100%"></div>
+        </div>
+        <div class="session-label" id="session-label">sessão 1 de 4</div>
+
+        <div class="status-dots" id="status-dots">
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="todo-section">
+        <div class="todo-header">TAREFAS</div>
+        <div class="todo-input-row">
+          <input class="todo-input" id="todo-input" placeholder="adicionar tarefa..." maxlength="60" />
+          <button class="add-btn" id="add-btn">+</button>
+        </div>
+        <div class="todo-list" id="todo-list"></div>
+      </div>
+    </div>
+  </main>
+
+  <audio id="lofi-audio" loop preload="auto">
+    <source src="assets/lofi.mp3" type="audio/mpeg" />
+  </audio>
+
+  <!-- use modern compiled bundle for behavior -->
+  <script src="js/ui/app.js" type="module"></script>
+</body>
+
+</html>
