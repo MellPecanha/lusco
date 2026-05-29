@@ -41,8 +41,37 @@ export class TodoController {
 
   getTodos = async (req: Request, res: Response): Promise<void> => {
     try {
-      const todos = await this.todoService.listTodos();
-      res.json(todos);
+      const rawTag = req.query.tag;
+      const tag = Array.isArray(rawTag) ? rawTag[0] : (typeof rawTag === 'string' && rawTag.trim().length > 0 ? rawTag.trim() : undefined);
+
+      const rawCompleted = req.query.completed;
+      let completed: boolean | undefined;
+      if (rawCompleted !== undefined) {
+        const v = Array.isArray(rawCompleted) ? rawCompleted[0] : String(rawCompleted);
+        if (v === 'true' || v === '1') completed = true;
+        else if (v === 'false' || v === '0') completed = false;
+        else {
+          res.status(400).json({ message: 'Invalid completed query value' });
+          return;
+        }
+      }
+
+      const rawPage = req.query.page;
+      const rawLimit = req.query.limit;
+
+      const pageNum = rawPage !== undefined ? Number(Array.isArray(rawPage) ? rawPage[0] : rawPage) : 1;
+      const limitNum = rawLimit !== undefined ? Number(Array.isArray(rawLimit) ? rawLimit[0] : rawLimit) : 10;
+
+      if (Number.isNaN(pageNum) || Number.isNaN(limitNum)) {
+        res.status(400).json({ message: 'Invalid page or limit' });
+        return;
+      }
+
+      const page = Math.max(1, Math.floor(pageNum));
+      const limit = Math.min(100, Math.max(1, Math.floor(limitNum)));
+
+      const result = await this.todoService.listTodos({ tag: tag as string | undefined, completed, page, limit });
+      res.json(result);
     } catch (error) {
       this.handleError(error, res);
     }
